@@ -115,9 +115,7 @@ video {
   color: #fff;
 }
 
-.pill {
-  font-size: 13px;
-}
+.pill { font-size: 13px; }
 
 .panel {
   padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px);
@@ -184,9 +182,7 @@ button, .file-label {
   background: linear-gradient(135deg, #5b6475, #2a3140);
 }
 
-#fileInput {
-  display: none;
-}
+#fileInput { display: none; }
 
 .hint {
   max-width: 760px;
@@ -213,14 +209,10 @@ button, .file-label {
   z-index: 20;
 }
 
-.toast.show {
-  opacity: 1;
-}
+.toast.show { opacity: 1; }
 
 @media (min-width: 720px) {
-  .controls {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .controls { grid-template-columns: repeat(4, 1fr); }
 }
 </style>
 </head>
@@ -240,7 +232,7 @@ button, .file-label {
       <div class="placeholder" id="placeholder">
         點這裡上傳參考圖<br>
         再點一次可更換圖片<br>
-        調成半透明後就能描輪廓
+        兩指可放大縮小
       </div>
       <img class="overlay-img" id="overlayImg" alt="參考圖" style="display:none;" />
     </div>
@@ -279,7 +271,7 @@ button, .file-label {
     </div>
 
     <div class="hint">
-      網頁開啟後會自動要求相機權限。點中間圖片區可上傳或更換參考圖；一根手指拖曳圖片位置。
+      開啟網頁後會自動要求相機權限。點中間圖片區可上傳或更換參考圖；一指拖曳、兩指縮放。
     </div>
   </section>
 </div>
@@ -313,13 +305,18 @@ let x = 0;
 let y = 0;
 let scale = 1;
 let rotate = 0;
+let mirrored = false;
+
 let isDragging = false;
 let startX = 0;
 let startY = 0;
 let baseX = 0;
 let baseY = 0;
-let mirrored = false;
 let moved = false;
+
+const pointers = new Map();
+let pinchStartDistance = 0;
+let pinchStartScale = 1;
 
 function showToast(msg) {
   toast.textContent = msg;
@@ -370,6 +367,12 @@ async function startCamera() {
   } catch (err) {
     showToast('無法開啟相機，請允許相機權限');
   }
+}
+
+function getDistance(p1, p2) {
+  const dx = p1.clientX - p2.clientX;
+  const dy = p1.clientY - p2.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
 overlayWrap.addEventListener('click', () => {
@@ -436,32 +439,64 @@ resetBtn.addEventListener('click', () => {
 });
 
 overlayWrap.addEventListener('pointerdown', (e) => {
-  isDragging = true;
-  moved = false;
+  pointers.set(e.pointerId, e);
   overlayWrap.setPointerCapture(e.pointerId);
 
-  startX = e.clientX;
-  startY = e.clientY;
-  baseX = x;
-  baseY = y;
+  moved = false;
+
+  if (pointers.size === 1) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    baseX = x;
+    baseY = y;
+  }
+
+  if (pointers.size === 2) {
+    isDragging = false;
+    const pts = Array.from(pointers.values());
+    pinchStartDistance = getDistance(pts[0], pts[1]);
+    pinchStartScale = scale;
+  }
 });
 
 overlayWrap.addEventListener('pointermove', (e) => {
-  if (!isDragging) return;
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, e);
 
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
+  if (pointers.size === 2) {
+    const pts = Array.from(pointers.values());
+    const currentDistance = getDistance(pts[0], pts[1]);
 
-  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-    moved = true;
+    if (pinchStartDistance > 0) {
+      let newScale = pinchStartScale * (currentDistance / pinchStartDistance);
+      newScale = Math.max(0.3, Math.min(2.5, newScale));
+
+      scale = newScale;
+      scaleRange.value = Math.round(scale * 100);
+      moved = true;
+      render();
+    }
+
+    return;
   }
 
-  x = baseX + dx;
-  y = baseY + dy;
-  render();
+  if (pointers.size === 1 && isDragging) {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      moved = true;
+    }
+
+    x = baseX + dx;
+    y = baseY + dy;
+    render();
+  }
 });
 
-overlayWrap.addEventListener('pointerup', () => {
+overlayWrap.addEventListener('pointerup', (e) => {
+  pointers.delete(e.pointerId);
   isDragging = false;
 
   setTimeout(() => {
@@ -469,7 +504,8 @@ overlayWrap.addEventListener('pointerup', () => {
   }, 80);
 });
 
-overlayWrap.addEventListener('pointercancel', () => {
+overlayWrap.addEventListener('pointercancel', (e) => {
+  pointers.delete(e.pointerId);
   isDragging = false;
   moved = false;
 });

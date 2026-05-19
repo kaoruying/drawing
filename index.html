@@ -5,108 +5,226 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>手繪描圖小幫手</title>
 <style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    margin: 0; width: 100%; height: 100%; overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-    background: #0b1220; color: #fff; user-select: none;
-  }
-  .app {
-    position: fixed; inset: 0; display: flex; flex-direction: column;
-    background: radial-gradient(circle at top, #1f3d68 0%, #0b1220 48%, #060913 100%);
-  }
-  .stage { position: relative; flex: 1; overflow: hidden; background: #111827; touch-action: none; }
-  video {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-    transform: scaleX(-1); background: #000;
-  }
-  .grid {
-    position: absolute; inset: 0; pointer-events: none; opacity: .18;
-    background-image:
-      linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
-    background-size: 40px 40px; display: none;
-  }
-  .overlay-wrap {
-    position: absolute; left: 50%; top: 50%; width: 72vw; max-width: 520px;
-    transform: translate(-50%, -50%) scale(1) rotate(0deg);
-    transform-origin: center center; touch-action: none;
-  }
-  .overlay-img {
-    width: 100%; display: block; opacity: .55;
-    filter: contrast(1.05) saturate(.95);
-    border: 2px dashed rgba(255,255,255,.45);
-    border-radius: 14px; background: rgba(255,255,255,.06);
-  }
-  .placeholder {
-    aspect-ratio: 1 / 1; display: grid; place-items: center; text-align: center;
-    padding: 28px; color: rgba(255,255,255,.88);
-    border: 2px dashed rgba(255,255,255,.38); border-radius: 18px;
-    background: rgba(255,255,255,.08); line-height: 1.7; font-weight: 700;
-  }
-  .topbar {
-    position: absolute; top: calc(env(safe-area-inset-top) + 12px);
-    left: 12px; right: 12px; display: flex; justify-content: space-between;
-    align-items: center; gap: 8px; z-index: 5;
-  }
-  .brand, .pill {
-    padding: 9px 12px; border-radius: 999px;
-    background: rgba(8, 15, 30, .58); backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-    font-size: 14px; font-weight: 800; color: #fff;
-  }
-  .pill { font-size: 13px; }
-  .panel {
-    padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px);
-    background: rgba(4, 9, 20, .96);
-    border-top: 1px solid rgba(255,255,255,.12);
-  }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: #060913;
+  color: #fff;
+  user-select: none;
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #060913;
+}
+
+.stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #111827;
+  touch-action: none;
+}
+
+video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .18;
+  background-image:
+    linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+  display: none;
+}
+
+.overlay-wrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 92vw;
+  max-width: 760px;
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  transform-origin: center center;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.overlay-img {
+  width: 100%;
+  display: block;
+  opacity: .55;
+  filter: contrast(1.05) saturate(.95);
+  border: 2px dashed rgba(255,255,255,.45);
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+}
+
+.placeholder {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 28px;
+  color: rgba(255,255,255,.88);
+  border: 2px dashed rgba(255,255,255,.38);
+  border-radius: 18px;
+  background: rgba(255,255,255,.08);
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+.topbar {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+}
+
+.brand, .pill {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(8, 15, 30, .58);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.pill {
+  font-size: 13px;
+}
+
+.panel {
+  padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px);
+  background: rgba(4, 9, 20, .96);
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.control {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 10px;
+}
+
+.control label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255,255,255,.74);
+  margin-bottom: 8px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #f6a623;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px auto 0;
+  max-width: 760px;
+}
+
+button, .file-label {
+  min-height: 42px;
+  border: 0;
+  border-radius: 14px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #244c7e, #162d52);
+  border: 1px solid rgba(255,255,255,.13);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+}
+
+.primary {
+  background: linear-gradient(135deg, #f6a623, #d87900);
+  color: #211200;
+}
+
+.danger {
+  background: linear-gradient(135deg, #5b6475, #2a3140);
+}
+
+#fileInput {
+  display: none;
+}
+
+.hint {
+  max-width: 760px;
+  margin: 10px auto 0;
+  color: rgba(255,255,255,.58);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 168px);
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.72);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 20;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+@media (min-width: 720px) {
   .controls {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    max-width: 760px; margin: 0 auto;
+    grid-template-columns: repeat(4, 1fr);
   }
-  .control {
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 16px; padding: 10px;
-  }
-  .control label {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 12px; color: rgba(255,255,255,.74); margin-bottom: 8px;
-  }
-  input[type="range"] { width: 100%; accent-color: #f6a623; }
-  .buttons {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 8px; margin: 10px auto 0; max-width: 760px;
-  }
-  button, .file-label {
-    min-height: 42px; border: 0; border-radius: 14px; font-weight: 800;
-    color: #fff; background: linear-gradient(135deg, #244c7e, #162d52);
-    border: 1px solid rgba(255,255,255,.13);
-    display: grid; place-items: center; font-size: 13px;
-  }
-  .primary { background: linear-gradient(135deg, #f6a623, #d87900); color: #211200; }
-  .danger { background: linear-gradient(135deg, #5b6475, #2a3140); }
-  #fileInput { display: none; }
-  .hint {
-    max-width: 760px; margin: 10px auto 0;
-    color: rgba(255,255,255,.58); font-size: 12px;
-    line-height: 1.5; text-align: center;
-  }
-  .toast {
-    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 168px);
-    transform: translateX(-50%); background: rgba(0,0,0,.72);
-    color: white; padding: 10px 14px; border-radius: 999px;
-    font-size: 13px; opacity: 0; pointer-events: none;
-    transition: opacity .25s ease; z-index: 20;
-  }
-  .toast.show { opacity: 1; }
-  @media (min-width: 720px) {
-    .controls { grid-template-columns: repeat(4, 1fr); }
-  }
+}
 </style>
 </head>
+
 <body>
 <div class="app">
   <main class="stage" id="stage">
@@ -115,12 +233,14 @@
 
     <div class="topbar">
       <div class="brand">手繪描圖小幫手</div>
-      <button class="pill" id="cameraBtn">開啟相機</button>
+      <div class="pill">相機模式</div>
     </div>
 
     <div class="overlay-wrap" id="overlayWrap">
       <div class="placeholder" id="placeholder">
-        上傳一張參考圖<br>調成半透明後<br>就可以放在紙上描輪廓
+        點這裡上傳參考圖<br>
+        再點一次可更換圖片<br>
+        調成半透明後就能描輪廓
       </div>
       <img class="overlay-img" id="overlayImg" alt="參考圖" style="display:none;" />
     </div>
@@ -132,14 +252,17 @@
         <label>透明度 <span id="opacityValue">55%</span></label>
         <input id="opacityRange" type="range" min="5" max="100" value="55">
       </div>
+
       <div class="control">
         <label>大小 <span id="scaleValue">100%</span></label>
         <input id="scaleRange" type="range" min="30" max="250" value="100">
       </div>
+
       <div class="control">
         <label>旋轉 <span id="rotateValue">0°</span></label>
         <input id="rotateRange" type="range" min="-180" max="180" value="0">
       </div>
+
       <div class="control">
         <label>線條感 <span id="contrastValue">普通</span></label>
         <input id="contrastRange" type="range" min="80" max="220" value="105">
@@ -149,166 +272,210 @@
     <div class="buttons">
       <label class="file-label primary" for="fileInput">上傳圖</label>
       <input id="fileInput" type="file" accept="image/*">
+
       <button id="gridBtn">格線</button>
-      <button id="mirrorBtn">鏡像</button>
+      <button id="mirrorBtn">圖片鏡像</button>
       <button class="danger" id="resetBtn">重置</button>
     </div>
 
-    <div class="hint">用一根手指拖曳圖片位置；用下方滑桿調大小、透明度與旋轉。建議把手機固定在紙張正上方使用。</div>
+    <div class="hint">
+      網頁開啟後會自動要求相機權限。點中間圖片區可上傳或更換參考圖；一根手指拖曳圖片位置。
+    </div>
   </section>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  const video = document.getElementById('camera');
-  const cameraBtn = document.getElementById('cameraBtn');
-  const fileInput = document.getElementById('fileInput');
-  const overlayWrap = document.getElementById('overlayWrap');
-  const overlayImg = document.getElementById('overlayImg');
-  const placeholder = document.getElementById('placeholder');
-  const grid = document.getElementById('grid');
-  const toast = document.getElementById('toast');
+const video = document.getElementById('camera');
+const fileInput = document.getElementById('fileInput');
+const overlayWrap = document.getElementById('overlayWrap');
+const overlayImg = document.getElementById('overlayImg');
+const placeholder = document.getElementById('placeholder');
+const grid = document.getElementById('grid');
+const toast = document.getElementById('toast');
 
-  const opacityRange = document.getElementById('opacityRange');
-  const scaleRange = document.getElementById('scaleRange');
-  const rotateRange = document.getElementById('rotateRange');
-  const contrastRange = document.getElementById('contrastRange');
+const opacityRange = document.getElementById('opacityRange');
+const scaleRange = document.getElementById('scaleRange');
+const rotateRange = document.getElementById('rotateRange');
+const contrastRange = document.getElementById('contrastRange');
 
-  const opacityValue = document.getElementById('opacityValue');
-  const scaleValue = document.getElementById('scaleValue');
-  const rotateValue = document.getElementById('rotateValue');
-  const contrastValue = document.getElementById('contrastValue');
+const opacityValue = document.getElementById('opacityValue');
+const scaleValue = document.getElementById('scaleValue');
+const rotateValue = document.getElementById('rotateValue');
+const contrastValue = document.getElementById('contrastValue');
 
-  const gridBtn = document.getElementById('gridBtn');
-  const mirrorBtn = document.getElementById('mirrorBtn');
-  const resetBtn = document.getElementById('resetBtn');
+const gridBtn = document.getElementById('gridBtn');
+const mirrorBtn = document.getElementById('mirrorBtn');
+const resetBtn = document.getElementById('resetBtn');
 
-  let x = 0, y = 0, scale = 1, rotate = 0;
-  let isDragging = false;
-  let startX = 0, startY = 0, baseX = 0, baseY = 0;
-  let mirrored = false;
+let x = 0;
+let y = 0;
+let scale = 1;
+let rotate = 0;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let baseX = 0;
+let baseY = 0;
+let mirrored = false;
+let moved = false;
 
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 1800);
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function render() {
+  overlayWrap.style.transform =
+    `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale}) rotate(${rotate}deg)`;
+
+  const opacity = opacityRange.value / 100;
+  const contrast = contrastRange.value / 100;
+
+  overlayImg.style.opacity = opacity;
+  overlayImg.style.filter = `contrast(${contrast}) saturate(.92)`;
+  overlayImg.style.transform = mirrored ? 'scaleX(-1)' : 'scaleX(1)';
+
+  opacityValue.textContent = `${opacityRange.value}%`;
+  scaleValue.textContent = `${Math.round(scale * 100)}%`;
+  rotateValue.textContent = `${rotate}°`;
+
+  if (contrastRange.value < 110) {
+    contrastValue.textContent = '柔和';
+  } else if (contrastRange.value < 160) {
+    contrastValue.textContent = '普通';
+  } else {
+    contrastValue.textContent = '清楚';
+  }
+}
+
+async function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('此瀏覽器不支援相機功能');
+    return;
   }
 
-  function render() {
-    overlayWrap.style.transform =
-      `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale}) rotate(${rotate}deg)`;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' }
+      },
+      audio: false
+    });
 
-    const opacity = opacityRange.value / 100;
-    const contrast = contrastRange.value / 100;
-
-    overlayImg.style.opacity = opacity;
-    overlayImg.style.filter = `contrast(${contrast}) saturate(.92)`;
-    overlayImg.style.transform = mirrored ? 'scaleX(-1)' : 'scaleX(1)';
-
-    opacityValue.textContent = `${opacityRange.value}%`;
-    scaleValue.textContent = `${Math.round(scale * 100)}%`;
-    rotateValue.textContent = `${rotate}°`;
-    contrastValue.textContent = contrastRange.value < 110 ? '柔和' : contrastRange.value < 160 ? '普通' : '清楚';
+    video.srcObject = stream;
+    showToast('相機已開啟');
+  } catch (err) {
+    showToast('無法開啟相機，請允許相機權限');
   }
+}
 
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-        audio: false
-      });
+overlayWrap.addEventListener('click', () => {
+  if (moved) return;
+  fileInput.value = '';
+  fileInput.click();
+});
 
-      video.srcObject = stream;
-      cameraBtn.textContent = '相機已開';
-      showToast('相機已開啟');
-    } catch (err) {
-      showToast('無法開啟相機，請確認瀏覽器權限');
-    }
-  }
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
 
-  cameraBtn.addEventListener('click', startCamera);
+  const reader = new FileReader();
 
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+  reader.onload = () => {
+    overlayImg.src = reader.result;
+    overlayImg.style.display = 'block';
+    placeholder.style.display = 'none';
+    showToast('參考圖已載入');
+  };
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      overlayImg.src = reader.result;
-      overlayImg.style.display = 'block';
-      placeholder.style.display = 'none';
-      showToast('參考圖已載入');
-    };
-    reader.readAsDataURL(file);
-  });
+  reader.readAsDataURL(file);
+});
 
-  opacityRange.addEventListener('input', render);
+opacityRange.addEventListener('input', render);
 
-  scaleRange.addEventListener('input', () => {
-    scale = scaleRange.value / 100;
-    render();
-  });
+scaleRange.addEventListener('input', () => {
+  scale = scaleRange.value / 100;
+  render();
+});
 
-  rotateRange.addEventListener('input', () => {
-    rotate = Number(rotateRange.value);
-    render();
-  });
+rotateRange.addEventListener('input', () => {
+  rotate = Number(rotateRange.value);
+  render();
+});
 
-  contrastRange.addEventListener('input', render);
+contrastRange.addEventListener('input', render);
 
-  gridBtn.addEventListener('click', () => {
-    grid.style.display = grid.style.display === 'block' ? 'none' : 'block';
-    showToast(grid.style.display === 'block' ? '格線已開啟' : '格線已關閉');
-  });
+gridBtn.addEventListener('click', () => {
+  grid.style.display = grid.style.display === 'block' ? 'none' : 'block';
+  showToast(grid.style.display === 'block' ? '格線已開啟' : '格線已關閉');
+});
 
-  mirrorBtn.addEventListener('click', () => {
-    mirrored = !mirrored;
-    render();
-    showToast(mirrored ? '已鏡像' : '已取消鏡像');
-  });
+mirrorBtn.addEventListener('click', () => {
+  mirrored = !mirrored;
+  render();
+  showToast(mirrored ? '圖片已鏡像' : '圖片已取消鏡像');
+});
 
-  resetBtn.addEventListener('click', () => {
-    x = 0;
-    y = 0;
-    scale = 1;
-    rotate = 0;
-    mirrored = false;
+resetBtn.addEventListener('click', () => {
+  x = 0;
+  y = 0;
+  scale = 1;
+  rotate = 0;
+  mirrored = false;
 
-    opacityRange.value = 55;
-    scaleRange.value = 100;
-    rotateRange.value = 0;
-    contrastRange.value = 105;
-
-    render();
-    showToast('已重置');
-  });
-
-  overlayWrap.addEventListener('pointerdown', (e) => {
-    isDragging = true;
-    overlayWrap.setPointerCapture(e.pointerId);
-    startX = e.clientX;
-    startY = e.clientY;
-    baseX = x;
-    baseY = y;
-  });
-
-  overlayWrap.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    x = baseX + e.clientX - startX;
-    y = baseY + e.clientY - startY;
-    render();
-  });
-
-  overlayWrap.addEventListener('pointerup', () => {
-    isDragging = false;
-  });
-
-  overlayWrap.addEventListener('pointercancel', () => {
-    isDragging = false;
-  });
+  opacityRange.value = 55;
+  scaleRange.value = 100;
+  rotateRange.value = 0;
+  contrastRange.value = 105;
 
   render();
+  showToast('已重置');
+});
+
+overlayWrap.addEventListener('pointerdown', (e) => {
+  isDragging = true;
+  moved = false;
+  overlayWrap.setPointerCapture(e.pointerId);
+
+  startX = e.clientX;
+  startY = e.clientY;
+  baseX = x;
+  baseY = y;
+});
+
+overlayWrap.addEventListener('pointermove', (e) => {
+  if (!isDragging) return;
+
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
+
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    moved = true;
+  }
+
+  x = baseX + dx;
+  y = baseY + dy;
+  render();
+});
+
+overlayWrap.addEventListener('pointerup', () => {
+  isDragging = false;
+
+  setTimeout(() => {
+    moved = false;
+  }, 80);
+});
+
+overlayWrap.addEventListener('pointercancel', () => {
+  isDragging = false;
+  moved = false;
+});
+
+render();
+startCamera();
 </script>
 </body>
 </html>

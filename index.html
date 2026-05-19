@@ -4,8 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>手繪描圖小幫手</title>
+
 <style>
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
 html, body {
   margin: 0;
@@ -13,7 +17,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-  background: #060913;
+  background: #06111f;
   color: #fff;
   user-select: none;
 }
@@ -23,7 +27,7 @@ html, body {
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #060913;
+  background: #06111f;
 }
 
 .stage {
@@ -55,6 +59,33 @@ video {
   display: none;
 }
 
+.topbar {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+}
+
+.brand, .pill {
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: rgba(8, 15, 30, .58);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pill {
+  font-size: 13px;
+  color: rgba(255,255,255,.88);
+}
+
 .overlay-wrap {
   position: absolute;
   left: 50%;
@@ -71,9 +102,8 @@ video {
   width: 100%;
   display: block;
   opacity: .55;
-  filter: contrast(1.05) saturate(.95);
   border: 2px dashed rgba(255,255,255,.45);
-  border-radius: 14px;
+  border-radius: 18px;
   background: rgba(255,255,255,.06);
 }
 
@@ -83,68 +113,44 @@ video {
   place-items: center;
   text-align: center;
   padding: 28px;
-  color: rgba(255,255,255,.88);
-  border: 2px dashed rgba(255,255,255,.38);
-  border-radius: 18px;
+  color: rgba(255,255,255,.9);
+  border: 2px dashed rgba(255,255,255,.42);
+  border-radius: 22px;
   background: rgba(255,255,255,.08);
   line-height: 1.7;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+
+.panel {
+  padding: 14px 14px calc(env(safe-area-inset-bottom) + 14px);
+  background:
+    linear-gradient(180deg, rgba(10, 23, 42, .98), rgba(4, 9, 20, .98));
+  border-top: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 -10px 30px rgba(0,0,0,.28);
+}
+
+.opacity-card {
+  max-width: 760px;
+  margin: 0 auto 12px;
+  padding: 13px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.13);
+}
+
+.opacity-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,.82);
   font-weight: 700;
 }
 
-.topbar {
-  position: absolute;
-  top: calc(env(safe-area-inset-top) + 12px);
-  left: 12px;
-  right: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  z-index: 5;
-}
-
-.brand, .pill {
-  padding: 9px 12px;
-  border-radius: 999px;
-  background: rgba(8, 15, 30, .58);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  font-size: 14px;
-  font-weight: 800;
-  color: #fff;
-}
-
-.pill { font-size: 13px; }
-
-.panel {
-  padding: 12px 12px calc(env(safe-area-inset-bottom) + 12px);
-  background: rgba(4, 9, 20, .96);
-  border-top: 1px solid rgba(255,255,255,.12);
-}
-
-.controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.control {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 16px;
-  padding: 10px;
-}
-
-.control label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: rgba(255,255,255,.74);
-  margin-bottom: 8px;
+.opacity-label span {
+  color: #f6a623;
 }
 
 input[type="range"] {
@@ -156,18 +162,18 @@ input[type="range"] {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin: 10px auto 0;
   max-width: 760px;
+  margin: 0 auto;
 }
 
 button, .file-label {
-  min-height: 42px;
+  min-height: 44px;
   border: 0;
-  border-radius: 14px;
-  font-weight: 800;
+  border-radius: 15px;
+  font-weight: 900;
   color: #fff;
   background: linear-gradient(135deg, #244c7e, #162d52);
-  border: 1px solid rgba(255,255,255,.13);
+  border: 1px solid rgba(255,255,255,.14);
   display: grid;
   place-items: center;
   font-size: 13px;
@@ -182,7 +188,9 @@ button, .file-label {
   background: linear-gradient(135deg, #5b6475, #2a3140);
 }
 
-#fileInput { display: none; }
+#fileInput {
+  display: none;
+}
 
 .hint {
   max-width: 760px;
@@ -196,7 +204,7 @@ button, .file-label {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(env(safe-area-inset-bottom) + 168px);
+  bottom: calc(env(safe-area-inset-bottom) + 138px);
   transform: translateX(-50%);
   background: rgba(0,0,0,.72);
   color: white;
@@ -209,17 +217,15 @@ button, .file-label {
   z-index: 20;
 }
 
-.toast.show { opacity: 1; }
-
-@media (min-width: 720px) {
-  .controls { grid-template-columns: repeat(4, 1fr); }
+.toast.show {
+  opacity: 1;
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-  <main class="stage" id="stage">
+  <main class="stage">
     <video id="camera" autoplay playsinline muted></video>
     <div class="grid" id="grid"></div>
 
@@ -232,46 +238,31 @@ button, .file-label {
       <div class="placeholder" id="placeholder">
         點這裡上傳參考圖<br>
         再點一次可更換圖片<br>
-        兩指可放大縮小
+        一指拖曳・兩指縮放旋轉
       </div>
       <img class="overlay-img" id="overlayImg" alt="參考圖" style="display:none;" />
     </div>
   </main>
 
   <section class="panel">
-    <div class="controls">
-      <div class="control">
-        <label>透明度 <span id="opacityValue">55%</span></label>
-        <input id="opacityRange" type="range" min="5" max="100" value="55">
+    <div class="opacity-card">
+      <div class="opacity-label">
+        <div>圖片透明度</div>
+        <span id="opacityValue">55%</span>
       </div>
-
-      <div class="control">
-        <label>大小 <span id="scaleValue">100%</span></label>
-        <input id="scaleRange" type="range" min="30" max="250" value="100">
-      </div>
-
-      <div class="control">
-        <label>旋轉 <span id="rotateValue">0°</span></label>
-        <input id="rotateRange" type="range" min="-180" max="180" value="0">
-      </div>
-
-      <div class="control">
-        <label>線條感 <span id="contrastValue">普通</span></label>
-        <input id="contrastRange" type="range" min="80" max="220" value="105">
-      </div>
+      <input id="opacityRange" type="range" min="5" max="100" value="55">
     </div>
 
     <div class="buttons">
       <label class="file-label primary" for="fileInput">上傳圖</label>
       <input id="fileInput" type="file" accept="image/*">
-
       <button id="gridBtn">格線</button>
-      <button id="mirrorBtn">圖片鏡像</button>
+      <button id="mirrorBtn">鏡像</button>
       <button class="danger" id="resetBtn">重置</button>
     </div>
 
     <div class="hint">
-      開啟網頁後會自動要求相機權限。點中間圖片區可上傳或更換參考圖；一指拖曳、兩指縮放。
+      開啟後會自動要求相機權限。點中間圖片區可上傳或更換參考圖。
     </div>
   </section>
 </div>
@@ -288,14 +279,7 @@ const grid = document.getElementById('grid');
 const toast = document.getElementById('toast');
 
 const opacityRange = document.getElementById('opacityRange');
-const scaleRange = document.getElementById('scaleRange');
-const rotateRange = document.getElementById('rotateRange');
-const contrastRange = document.getElementById('contrastRange');
-
 const opacityValue = document.getElementById('opacityValue');
-const scaleValue = document.getElementById('scaleValue');
-const rotateValue = document.getElementById('rotateValue');
-const contrastValue = document.getElementById('contrastValue');
 
 const gridBtn = document.getElementById('gridBtn');
 const mirrorBtn = document.getElementById('mirrorBtn');
@@ -317,6 +301,8 @@ let moved = false;
 const pointers = new Map();
 let pinchStartDistance = 0;
 let pinchStartScale = 1;
+let pinchStartAngle = 0;
+let pinchStartRotate = 0;
 
 function showToast(msg) {
   toast.textContent = msg;
@@ -328,24 +314,9 @@ function render() {
   overlayWrap.style.transform =
     `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale}) rotate(${rotate}deg)`;
 
-  const opacity = opacityRange.value / 100;
-  const contrast = contrastRange.value / 100;
-
-  overlayImg.style.opacity = opacity;
-  overlayImg.style.filter = `contrast(${contrast}) saturate(.92)`;
+  overlayImg.style.opacity = opacityRange.value / 100;
   overlayImg.style.transform = mirrored ? 'scaleX(-1)' : 'scaleX(1)';
-
   opacityValue.textContent = `${opacityRange.value}%`;
-  scaleValue.textContent = `${Math.round(scale * 100)}%`;
-  rotateValue.textContent = `${rotate}°`;
-
-  if (contrastRange.value < 110) {
-    contrastValue.textContent = '柔和';
-  } else if (contrastRange.value < 160) {
-    contrastValue.textContent = '普通';
-  } else {
-    contrastValue.textContent = '清楚';
-  }
 }
 
 async function startCamera() {
@@ -356,9 +327,7 @@ async function startCamera() {
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: 'environment' }
-      },
+      video: { facingMode: { ideal: 'environment' } },
       audio: false
     });
 
@@ -373,6 +342,13 @@ function getDistance(p1, p2) {
   const dx = p1.clientX - p2.clientX;
   const dy = p1.clientY - p2.clientY;
   return Math.sqrt(dx * dx + dy * dy);
+}
+
+function getAngle(p1, p2) {
+  return Math.atan2(
+    p2.clientY - p1.clientY,
+    p2.clientX - p1.clientX
+  ) * 180 / Math.PI;
 }
 
 overlayWrap.addEventListener('click', () => {
@@ -399,18 +375,6 @@ fileInput.addEventListener('change', (e) => {
 
 opacityRange.addEventListener('input', render);
 
-scaleRange.addEventListener('input', () => {
-  scale = scaleRange.value / 100;
-  render();
-});
-
-rotateRange.addEventListener('input', () => {
-  rotate = Number(rotateRange.value);
-  render();
-});
-
-contrastRange.addEventListener('input', render);
-
 gridBtn.addEventListener('click', () => {
   grid.style.display = grid.style.display === 'block' ? 'none' : 'block';
   showToast(grid.style.display === 'block' ? '格線已開啟' : '格線已關閉');
@@ -428,12 +392,7 @@ resetBtn.addEventListener('click', () => {
   scale = 1;
   rotate = 0;
   mirrored = false;
-
   opacityRange.value = 55;
-  scaleRange.value = 100;
-  rotateRange.value = 0;
-  contrastRange.value = 105;
-
   render();
   showToast('已重置');
 });
@@ -441,7 +400,6 @@ resetBtn.addEventListener('click', () => {
 overlayWrap.addEventListener('pointerdown', (e) => {
   pointers.set(e.pointerId, e);
   overlayWrap.setPointerCapture(e.pointerId);
-
   moved = false;
 
   if (pointers.size === 1) {
@@ -457,6 +415,8 @@ overlayWrap.addEventListener('pointerdown', (e) => {
     const pts = Array.from(pointers.values());
     pinchStartDistance = getDistance(pts[0], pts[1]);
     pinchStartScale = scale;
+    pinchStartAngle = getAngle(pts[0], pts[1]);
+    pinchStartRotate = rotate;
   }
 });
 
@@ -466,14 +426,20 @@ overlayWrap.addEventListener('pointermove', (e) => {
 
   if (pointers.size === 2) {
     const pts = Array.from(pointers.values());
+
     const currentDistance = getDistance(pts[0], pts[1]);
+    const currentAngle = getAngle(pts[0], pts[1]);
 
     if (pinchStartDistance > 0) {
       let newScale = pinchStartScale * (currentDistance / pinchStartDistance);
-      newScale = Math.max(0.3, Math.min(2.5, newScale));
+      newScale = Math.max(0.3, Math.min(2.8, newScale));
 
       scale = newScale;
-      scaleRange.value = Math.round(scale * 100);
+      rotate = Math.round(pinchStartRotate + currentAngle - pinchStartAngle);
+
+      if (rotate > 180) rotate -= 360;
+      if (rotate < -180) rotate += 360;
+
       moved = true;
       render();
     }
